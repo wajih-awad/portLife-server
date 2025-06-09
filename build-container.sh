@@ -12,14 +12,14 @@ fi
 REPO=$(basename "$(pwd)")
 
 # Repository label
-LABEL="org.opencontainers.image.source=https://github.com/easylab-online/${REPO}"
+LABEL="org.opencontainers.image.source=https://github.com/wajih-awad/${REPO}"
 
 
 # Repository name in lowercase
 REPO_LC=${REPO,,}
 
 # Image name
-IMAGE="ghcr.io/easylab-online/${REPO_LC}:${TAG}"
+IMAGE="ghcr.io/wajih-awad/${REPO_LC}:${TAG}"
 
 # build image
 docker build -f Containerfile --label "${LABEL}" -t "${IMAGE}" .
