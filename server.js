@@ -27,7 +27,6 @@ wss.on('connection', (ws, req) => {
       if (requestId && pendingResponses[requestId]) {
       
      
-        // console.log('pendingResponses', data);
         pendingResponses[requestId](data);
         delete pendingResponses[requestId];
       }
@@ -56,48 +55,34 @@ app.use((req, res) => {
 
 
 
-  let url = req.originalUrl
-  // if include api in url
+  let url = req.originalUrl // original url with custom 
 
-  let responseType = 'json'
-  if(url.includes('api')){
-    url =`:3081${url}`
-  } else
-  if(url.includes('fastmart-data'))
-  {
-    responseType= 'arraybuffer'
-    url =`${url}`
-    
-  }
-  console.log('method', req.method);
-
-  if(req.method === 'OPTIONS'){
-//    req.method="POST"/
-  }
-  const requestData = {
-    responseType:responseType,
+  let requestData = {
     requestId,
     method: req.method,
     url: url,
     headers: req.headers,
     body: req.body
   };
-
-
-  console.log('requestData -', requestData);
-  if(req.method === 'OPTIONS'){
+  // custom url  
+  if(url.includes('api')){
+   requestData.url =`:3081${url}`  // example: if use port in url localhost
+  } else
+  if(url.includes('fastmart-data'))  // example: if url get image or file
+  {
+   requestData.responseType= 'arraybuffer'
     
-    // 204 No Content
-    res.status(204).send();
-    return;
   }
+
+
+
+
+
 
   // إرسال للعميل
-  if(req.method !== 'OPTIONS'){
-    ws.send(JSON.stringify(requestData));
-  }
+  ws.send(JSON.stringify(requestData));
 
-  // التخزين المؤقت حتى يأتي الرد
+  // انتظار الرد  1 دقيقة انتظار
   const timeout = setTimeout(() => {
     delete pendingResponses[requestId];
     res.status(504).send('Gateway Timeout');
@@ -105,13 +90,10 @@ app.use((req, res) => {
 
   pendingResponses[requestId] = (clientResponse) => {
     clearTimeout(timeout);
-     let data = clientResponse.data
+     let data = clientResponse.data 
 
-     console.log('clientResponse---', clientResponse.data);
     if(clientResponse.responseType === 'arraybuffer'){
       res.setHeader('Content-Type', clientResponse.contentType);
-
-      
 
       data = Buffer.from(data, 'base64');
     }
