@@ -65,7 +65,7 @@ app.use((req, res) => {
     body: req.body
   };
   // custom url  
-  if(url.includes('api')){
+  if(url.includes('api-sahm360')){
     requestData.url =`:3090${url}`  // example: if use port in url localhost
    } else
    if(url.includes('tef')){
