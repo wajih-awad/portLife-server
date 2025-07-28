@@ -66,8 +66,11 @@ app.use((req, res) => {
   };
   // custom url  
   if(url.includes('api')){
-   requestData.url =`:3081${url}`  // example: if use port in url localhost
-  } else
+    requestData.url =`:3090${url}`  // example: if use port in url localhost
+   } else
+   if(url.includes('tef')){
+    requestData.url =`:3057${url}`   // example: if use port in url localhost
+   } else
   if(url.includes('fastmart-data'))  // example: if url get image or file
   {
    requestData.responseType= 'arraybuffer'
